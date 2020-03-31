@@ -12,7 +12,7 @@
       </v-card>
       <v-card color="error" dark>
         <v-card-text class="display-1 text-center">
-          650 - {{ fecha }}
+          {{ valor }} - {{ fecha }}
         </v-card-text>
       </v-card>
     </v-flex>
@@ -20,14 +20,29 @@
 </template>
 
 <script>
+import axios from 'axios'
+
 export default {
   name: 'Home',
 
   data() {
     return {
-      fecha: '',
+      fecha: new Date().toISOString().substr(0, 10),
       minimo: '1984',
-      maximo: new Date().toISOString().substr(0, 10)
+      maximo: new Date().toISOString().substr(0, 10),
+      valor: null
+    }
+  },
+
+  created() {
+    this.getDolar('31-03-2020')
+  },
+
+  methods: {
+    async getDolar(dia) {
+      let datos = await axios.get(`https://mindicador.cl/api/dolar/${dia}`)
+      console.log(datos)
+      this.valor = await datos.data.serie[0].valor
     }
   }
 }
