@@ -8,11 +8,12 @@
           locale="es-pe"
           :min="minimo"
           :max="maximo"
+          @change="getDolar(fecha)"
         ></v-date-picker>
       </v-card>
       <v-card color="error" dark>
         <v-card-text class="display-1 text-center">
-          {{ valor }} - {{ fecha }}
+          {{ valor }}
         </v-card-text>
       </v-card>
     </v-flex>
@@ -35,14 +36,24 @@ export default {
   },
 
   created() {
-    this.getDolar('31-03-2020')
+    this.getDolar(this.fecha)
   },
 
   methods: {
     async getDolar(dia) {
-      let datos = await axios.get(`https://mindicador.cl/api/dolar/${dia}`)
-      console.log(datos)
-      this.valor = await datos.data.serie[0].valor
+      let ddmmyyyy = dia.split('-').reverse().join('-')
+
+      try {
+        let datos = await axios.get(`https://mindicador.cl/api/dolar/${ddmmyyyy}`)
+
+        if (datos.data.serie.length) {
+          this.valor = await datos.data.serie[0].valor
+        } else {
+          this.valor = 'Sin resultados'
+        }
+      } catch (error) {
+        console.log(error)
+      }
     }
   }
 }
