@@ -2,7 +2,13 @@
   <v-layout wrap>
     <v-flex xs12>
       <v-card>
-        <v-date-picker v-model="fecha" full-width></v-date-picker>
+        <v-date-picker
+          v-model="fecha"
+          full-width
+          locale="es-pe"
+          :min="minimo"
+          :max="maximo"
+        ></v-date-picker>
       </v-card>
       <v-card color="error" dark>
         <v-card-text class="display-1 text-center">
@@ -19,7 +25,9 @@ export default {
 
   data() {
     return {
-      fecha: ''
+      fecha: '',
+      minimo: '1984',
+      maximo: new Date().toISOString().substr(0, 10)
     }
   }
 }
