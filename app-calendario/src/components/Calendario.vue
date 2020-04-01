@@ -11,7 +11,7 @@
             >Agregar</v-btn
           >
           <v-btn outlined class="mr-4" color="grey darken-2" @click="setToday">
-            Today
+            Hoy
           </v-btn>
           <v-btn fab text small color="grey darken-2" @click="prev">
             <v-icon small>mdi-chevron-left</v-icon>
@@ -30,16 +30,16 @@
             </template>
             <v-list>
               <v-list-item @click="type = 'day'">
-                <v-list-item-title>Day</v-list-item-title>
+                <v-list-item-title>Día</v-list-item-title>
               </v-list-item>
               <v-list-item @click="type = 'week'">
-                <v-list-item-title>Week</v-list-item-title>
+                <v-list-item-title>Semana</v-list-item-title>
               </v-list-item>
               <v-list-item @click="type = 'month'">
-                <v-list-item-title>Month</v-list-item-title>
+                <v-list-item-title>Mes</v-list-item-title>
               </v-list-item>
               <v-list-item @click="type = '4day'">
-                <v-list-item-title>4 days</v-list-item-title>
+                <v-list-item-title>4 días</v-list-item-title>
               </v-list-item>
             </v-list>
           </v-menu>
@@ -54,6 +54,9 @@
           :event-color="getEventColor"
           :now="today"
           :type="type"
+          :weekdays="[1, 2, 3, 4, 5, 6, 0]"
+          locale="es-pe"
+          :short-weekdays="false"
           @click:event="showEvent"
           @click:more="viewDay"
           @click:date="viewDay"
@@ -143,10 +146,10 @@ export default {
     focus: new Date().toISOString().substr(0, 10),
     type: 'month',
     typeToLabel: {
-      month: 'Month',
-      week: 'Week',
-      day: 'Day',
-      '4day': '4 Days'
+      month: 'Mes',
+      week: 'Semana',
+      day: 'Día',
+      '4day': '4 Días'
     },
     start: null,
     end: null,
