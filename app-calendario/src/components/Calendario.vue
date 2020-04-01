@@ -3,6 +3,13 @@
     <v-col>
       <v-sheet height="64">
         <v-toolbar flat color="white">
+          <v-btn
+            color="primary"
+            class="mr-4"
+            dark
+            @click="mostrarFormulario = true"
+            >Agregar</v-btn
+          >
           <v-btn outlined class="mr-4" color="grey darken-2" @click="setToday">
             Today
           </v-btn>
@@ -52,6 +59,46 @@
           @click:date="viewDay"
           @change="updateRange"
         ></v-calendar>
+        <v-dialog v-model="mostrarFormulario">
+          <v-card>
+            <v-card-text>
+              <v-form @submit.prevent="agregarEvento">
+                <v-text-field
+                  type="text"
+                  label="Agregar nombre"
+                  v-model="nuevoEvento.name"
+                ></v-text-field>
+                <v-text-field
+                  type="text"
+                  label="Agregar detalles"
+                  v-model="nuevoEvento.details"
+                ></v-text-field>
+                <v-text-field
+                  type="date"
+                  label="Inicio del evento"
+                  v-model="nuevoEvento.start"
+                ></v-text-field>
+                <v-text-field
+                  type="date"
+                  label="Fin del evento"
+                  v-model="nuevoEvento.end"
+                ></v-text-field>
+                <v-text-field
+                  type="color"
+                  label="Color"
+                  v-model="nuevoEvento.color"
+                ></v-text-field>
+                <v-btn
+                  type="submit"
+                  color="primary"
+                  class="mr-4"
+                  @click.stop="mostrarFormulario = false"
+                  >Agregar</v-btn
+                >
+              </v-form>
+            </v-card-text>
+          </v-card>
+        </v-dialog>
         <v-menu
           v-model="selectedOpen"
           :close-on-content-click="false"
@@ -125,7 +172,16 @@ export default {
       'Birthday',
       'Conference',
       'Party'
-    ]
+    ],
+    // Variables adicionales
+    mostrarFormulario: false,
+    nuevoEvento: {
+      name: null,
+      details: null,
+      start: null,
+      end: null,
+      color: null
+    }
   }),
   computed: {
     title() {
@@ -170,6 +226,37 @@ export default {
     this.$refs.calendar.checkChange()
   },
   methods: {
+    async agregarEvento() {
+      try {
+        if (
+          this.nuevoEvento.name &&
+          this.nuevoEvento.start &&
+          this.nuevoEvento.end
+        ) {
+          await db.collection('eventos').add({
+            name: this.nuevoEvento.name,
+            details: this.nuevoEvento.details,
+            start: this.nuevoEvento.start,
+            end: this.nuevoEvento.end,
+            color: this.nuevoEvento.color
+          })
+
+          this.obtenerEventos()
+
+          this.nuevoEvento = {
+            name: null,
+            details: null,
+            start: null,
+            end: null,
+            color: null
+          }
+        } else {
+          console.log('Campos obligatorios')
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    },
     async obtenerEventos() {
       try {
         const snapshot = await db.collection('eventos').get()
