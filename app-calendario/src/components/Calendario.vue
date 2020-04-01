@@ -88,6 +88,8 @@
 </template>
 
 <script>
+import { db } from '../main'
+
 export default {
   data: () => ({
     today: new Date().toISOString().substr(0, 10),
@@ -161,10 +163,29 @@ export default {
       })
     }
   },
+  created() {
+    this.obtenerEventos()
+  },
   mounted() {
     this.$refs.calendar.checkChange()
   },
   methods: {
+    async obtenerEventos() {
+      try {
+        const snapshot = await db.collection('eventos').get()
+        const eventos = []
+
+        snapshot.forEach(doc => {
+          let evento = doc.data()
+          evento.id = doc.id
+          eventos.push(evento)
+        })
+
+        this.events = eventos
+      } catch (error) {
+        console.log(error)
+      }
+    },
     viewDay({ date }) {
       this.focus = date
       this.type = 'day'
