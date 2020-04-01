@@ -5,3 +5,4 @@
 * 20 Parámetros dinámicos y rutas a través de eventos | Curso de Vue.js 😍 Desde Cero
 * Vuetify, Axios y Vuex [Práctica] - Curso de Vue.js en español
 * Vue JS + Firebase + Vuetify [Práctica Calendario con Firestore]
+* NUXT JS ⚡ Acelera tus proyectos con Vue JS ⚡ [Web Universales]
