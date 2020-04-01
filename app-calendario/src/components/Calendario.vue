@@ -110,24 +110,46 @@
         >
           <v-card color="grey lighten-4" min-width="350px" flat>
             <v-toolbar :color="selectedEvent.color" dark>
-              <v-btn icon>
-                <v-icon>mdi-pencil</v-icon>
+              <v-btn icon @click="eliminarEvento(selectedEvent)">
+                <v-icon>mdi-delete</v-icon>
               </v-btn>
               <v-toolbar-title v-html="selectedEvent.name"></v-toolbar-title>
               <v-spacer></v-spacer>
-              <v-btn icon>
-                <v-icon>mdi-heart</v-icon>
-              </v-btn>
-              <v-btn icon>
-                <v-icon>mdi-dots-vertical</v-icon>
-              </v-btn>
             </v-toolbar>
             <v-card-text>
-              <span v-html="selectedEvent.details"></span>
+              <div v-if="eventoEditado !== selectedEvent.id">
+                <div>{{ selectedEvent.name }}</div>
+                <div>{{ selectedEvent.details }}</div>
+              </div>
+              <v-form v-else>
+                <v-text-field
+                  type="text"
+                  v-model="selectedEvent.name"
+                  label="Editar nombre"
+                ></v-text-field>
+                <textarea-autosize
+                  v-model="selectedEvent.details"
+                  type="text"
+                ></textarea-autosize>
+              </v-form>
             </v-card-text>
             <v-card-actions>
               <v-btn text color="secondary" @click="selectedOpen = false">
                 Cancel
+              </v-btn>
+              <v-btn
+                text
+                v-if="eventoEditado !== selectedEvent.id"
+                @click.prevent="eventoEditado = selectedEvent.id"
+              >
+                Editar
+              </v-btn>
+              <v-btn
+                v-else
+                text
+                @click.prevent="actualizarEvento(selectedEvent)"
+              >
+                Guardar cambios
               </v-btn>
             </v-card-actions>
           </v-card>
@@ -184,7 +206,8 @@ export default {
       start: null,
       end: null,
       color: null
-    }
+    },
+    eventoEditado: null
   }),
   computed: {
     title() {
@@ -229,6 +252,34 @@ export default {
     this.$refs.calendar.checkChange()
   },
   methods: {
+    async actualizarEvento(ev) {
+      try {
+        await db
+          .collection('eventos')
+          .doc(ev.id)
+          .update({
+            name: ev.name,
+            details: ev.details
+          })
+
+        this.selectedOpen = false
+        this.eventoEditado = null
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    async eliminarEvento(ev) {
+      try {
+        await db
+          .collection('eventos')
+          .doc(ev.id)
+          .delete()
+        this.selectedOpen = false
+        this.obtenerEventos()
+      } catch (error) {
+        console.log(error)
+      }
+    },
     async agregarEvento() {
       try {
         if (
