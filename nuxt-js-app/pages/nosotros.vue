@@ -6,6 +6,6 @@
 
 <script>
 export default {
-
+  layout: 'nosotros'
 }
 </script>
